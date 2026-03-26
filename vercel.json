@@ -1,0 +1,9 @@
+{
+  "build": {
+    "command": "flutter build web --release",
+    "outputDirectory": "build/web"
+  },
+  "github": {
+    "silent": true
+  }
+}
