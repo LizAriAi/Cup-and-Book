@@ -104,21 +104,20 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ],
-      ),
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            padding: const EdgeInsets.all(16),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             color: Colors.brown[50],
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search books by title, author, or ISBN...',
-                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search books...',
+                prefixIcon: const Icon(Icons.search, size: 20),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: const Icon(Icons.clear, size: 18),
                         onPressed: () {
                           _searchController.clear();
                           _loadBooks();
@@ -127,8 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     : null,
                 filled: true,
                 fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -141,7 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-
+        ),
+      ),
+      body: Column(
+        children: [
           // Filters Panel
           if (_showFilters) _buildFiltersPanel(),
 

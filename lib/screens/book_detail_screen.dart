@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 
-class BookDetailScreen extends StatefulWidget {
+class BookDetailScreen extends StatelessWidget {
   final Book book;
 
   const BookDetailScreen({super.key, required this.book});
 
   @override
-  State<BookDetailScreen> createState() => _BookDetailScreenState();
-}
-
-class _BookDetailScreenState extends State<BookDetailScreen> {
-  bool _isDescriptionExpanded = false;
-  static const int _descriptionMaxLines = 4;
-
-  @override
   Widget build(BuildContext context) {
-    final rating = widget.book.rating;
-    final descriptionLength = widget.book.description.length;
+    final rating = book.rating;
 
     return Scaffold(
       appBar: AppBar(
@@ -30,75 +21,69 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Section: Cover + Basic Info with vertical divider
+            // Top Section: Cover + Basic Info
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Cover Image (smaller, like Amazon button size)
+                // Cover Image
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: widget.book.coverImageUrl != null
+                  borderRadius: BorderRadius.circular(12),
+                  child: book.coverImageUrl != null
                       ? Image.network(
-                          widget.book.coverImageUrl!,
-                          width: 80,
-                          height: 120,
+                          book.coverImageUrl!,
+                          width: 120,
+                          height: 180,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
-                            width: 80,
-                            height: 120,
+                            width: 120,
+                            height: 180,
                             color: Colors.brown[200],
-                            child: const Icon(Icons.book, size: 40),
+                            child: const Icon(Icons.book, size: 60),
                           ),
                         )
                       : Container(
-                          width: 80,
-                          height: 120,
+                          width: 120,
+                          height: 180,
                           color: Colors.brown[200],
-                          child: const Icon(Icons.book, size: 40),
+                          child: const Icon(Icons.book, size: 60),
                         ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
 
-                // Left side: Age Range + Genre
+                // Book Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.book.title,
+                        book.title,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Text(
-                        'by ${widget.book.author}',
+                        'by ${book.author}',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: Colors.grey[700],
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(Icons.menu_book, size: 14),
+                          const Icon(Icons.menu_book, size: 16),
                           const SizedBox(width: 4),
-                          Text(
-                            '${widget.book.pageCount} pages',
-                            style: const TextStyle(fontSize: 12),
-                          ),
+                          Text('${book.pageCount} pages'),
                         ],
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.person_outline, size: 14),
+                          const Icon(Icons.person_outline, size: 16),
                           const SizedBox(width: 4),
-                          Text(
-                            widget.book.ageRange.label,
-                            style: const TextStyle(fontSize: 12),
-                          ),
+                          Text(book.ageRange.label),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -107,263 +92,190 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       Wrap(
                         spacing: 4,
                         runSpacing: 4,
-                        children: widget.book.genres.map((g) {
+                        children: book.genres.map((g) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
+                              horizontal: 8,
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.brown[100],
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               g.label,
-                              style: const TextStyle(fontSize: 10),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           );
                         }).toList(),
                       ),
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
 
                       // Community Rating
-                      if (widget.book.communityRating > 0) ...[
+                      if (book.communityRating > 0) ...[
                         Row(
                           children: [
                             ...List.generate(5, (i) {
                               return Icon(
-                                i < widget.book.communityRating.round()
+                                i < book.communityRating.round()
                                     ? Icons.star
                                     : Icons.star_border,
                                 color: Colors.amber,
-                                size: 14,
+                                size: 20,
                               );
                             }),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 8),
                             Text(
-                              '${widget.book.communityRating}/5',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              '${book.communityRating}/5',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                         Text(
-                          '${widget.book.reviewCount} reviews',
+                          '${book.reviewCount} community reviews',
                           style: TextStyle(
                             color: Colors.grey[600],
-                            fontSize: 10,
+                            fontSize: 12,
                           ),
                         ),
                       ],
                     ],
                   ),
                 ),
-
-                // Vertical divider line
-                Container(
-                  width: 1,
-                  height: 180,
-                  color: Colors.grey[300],
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                ),
-
-                // Right side: Content Advisory
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Content Advisory',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Horizontal row with labels and ratings
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Header row
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 70,
-                                  child: Text(
-                                    'Violence',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 70,
-                                  child: Text(
-                                    'Profanity',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 70,
-                                  child: Text(
-                                    'Sexual',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 70,
-                                  child: Text(
-                                    'Scary',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Rating dots row
-                          Row(
-                            children: [
-                              _RatingDots(value: rating.violence.value, label: 'Violence'),
-                              _RatingDots(value: rating.profanity.value, label: 'Profanity'),
-                              _RatingDots(value: rating.sexualContent.value, label: 'Sexual'),
-                              _RatingDots(value: rating.scaryThemes.value, label: 'Scary'),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          // Mature Topics
-                          Row(
-                            children: [
-                              Text(
-                                'Mature Topics: ',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: _getColor(rating.matureTopics.value)
-                                      .withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  rating.matureTopics.label,
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    color: _getColor(rating.matureTopics.value),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
-            // Description (with read more if needed)
+            // Description
             const Text(
               'Description',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.book.description,
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      height: 1.5,
-                    ),
-                    maxLines: _isDescriptionExpanded ? null : _descriptionMaxLines,
-                    overflow: _isDescriptionExpanded
-                        ? TextOverflow.visible
-                        : TextOverflow.ellipsis,
-                  ),
-                  if (descriptionLength > 200 && !_isDescriptionExpanded)
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _isDescriptionExpanded = true;
-                        });
-                      },
-                      child: const Text('Read more'),
-                    ),
-                ],
+            Text(
+              book.description,
+              style: TextStyle(
+                color: Colors.grey[700],
+                height: 1.5,
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
+
+            // Content Ratings
+            const Text(
+              'Content Ratings',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            _RatingRow(
+              label: 'Violence',
+              value: rating.violence.value,
+              description: rating.violence.label,
+            ),
+            const SizedBox(height: 16),
+            _RatingRow(
+              label: 'Profanity',
+              value: rating.profanity.value,
+              description: rating.profanity.label,
+            ),
+            const SizedBox(height: 16),
+            _RatingRow(
+              label: 'Sexual Content',
+              value: rating.sexualContent.value,
+              description: rating.sexualContent.label,
+            ),
+            const SizedBox(height: 16),
+            _RatingRow(
+              label: 'Scary Themes',
+              value: rating.scaryThemes.value,
+              description: rating.scaryThemes.label,
+            ),
+            const SizedBox(height: 16),
+            _RatingRow(
+              label: 'Mature Topics',
+              value: rating.matureTopics.value,
+              description: rating.matureTopics.label,
+            ),
+
+            const SizedBox(height: 24),
+
+            // Reviews Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Reviews',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    // TODO: Add review
+                  },
+                  icon: const Icon(Icons.rate_review, size: 18),
+                  label: const Text('Add a Review'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Sample reviews would go here
+            if (book.reviewCount > 0) ...[
+              Text(
+                '${book.reviewCount} community reviews',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+            ] else ...[
+              Text(
+                'No reviews yet. Be the first to review!',
+                style: TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic),
+              ),
+            ],
+
+            const SizedBox(height: 24),
 
             // Where to Buy
-            const Text(
-              'Where to Buy',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            if (book.purchaseLinks.isNotEmpty) ...[
+              const Text(
+                'Where to Buy',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: widget.book.purchaseLinks.entries.map((entry) {
-                return ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Open URL
-                  },
-                  icon: const Icon(Icons.shopping_cart, size: 14),
-                  label: Text(
-                    entry.key,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown[700],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: book.purchaseLinks.entries.map((entry) {
+                  return ElevatedButton.icon(
+                    onPressed: () {
+                      // TODO: Open URL
+                    },
+                    icon: const Icon(Icons.shopping_cart, size: 18),
+                    label: Text(entry.key),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown[700],
+                      foregroundColor: Colors.white,
                     ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                );
-              }).toList(),
-            ),
+                  );
+                }).toList(),
+              ),
+            ],
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Actions
             Row(
@@ -373,7 +285,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     onPressed: () {
                       // TODO: Add to bookshelf
                     },
-                    icon: const Icon(Icons.bookmark_add, size: 18),
+                    icon: const Icon(Icons.bookmark_add),
                     label: const Text('Add to Bookshelf'),
                   ),
                 ),
@@ -383,7 +295,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     onPressed: () {
                       // TODO: Write review
                     },
-                    icon: const Icon(Icons.rate_review, size: 18),
+                    icon: const Icon(Icons.rate_review),
                     label: const Text('Write Review'),
                   ),
                 ),
@@ -396,74 +308,64 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       ),
     );
   }
-
-  Color _getColor(int value) {
-    if (value <= 1) return Colors.green;
-    if (value <= 2) return Colors.green[300]!;
-    if (value <= 3) return Colors.yellow[700]!;
-    if (value <= 4) return Colors.orange;
-    return Colors.red;
-  }
 }
 
-class _RatingDots extends StatelessWidget {
-  final int value;
+class _RatingRow extends StatelessWidget {
   final String label;
+  final int value;
+  final String description;
 
-  const _RatingDots({
-    required this.value,
+  const _RatingRow({
     required this.label,
+    required this.value,
+    required this.description,
   });
-
-  Color _getColor(int value) {
-    if (value <= 1) return Colors.green;
-    if (value <= 2) return Colors.green[300]!;
-    if (value <= 3) return Colors.yellow[700]!;
-    if (value <= 4) return Colors.orange;
-    return Colors.red;
-  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 70,
-      child: Column(
+    final color = _getColor(value);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(5, (i) {
-              return Container(
-                width: 10,
-                height: 10,
-                margin: const EdgeInsets.only(right: 2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: i < value
-                      ? _getColor(value)
-                      : Colors.grey[200],
-                  border: Border.all(
-                    color: i < value
-                        ? _getColor(value)
-                        : Colors.grey[300]!,
-                    width: 1,
-                  ),
-                ),
-              );
-            }),
+          SizedBox(
+            width: 130,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
           ),
-          const SizedBox(height: 2),
+          // Rating bars
+          Expanded(
+            child: Row(
+              children: List.generate(5, (i) {
+                return Expanded(
+                  child: Container(
+                    height: 20,
+                    margin: const EdgeInsets.only(right: 4),
+                    decoration: BoxDecoration(
+                      color: i < value ? color : Colors.grey[200],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            width: 60,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: _getColor(value).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(3),
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               '$value',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 9,
-                color: _getColor(value),
+                color: color,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -471,5 +373,13 @@ class _RatingDots extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _getColor(int value) {
+    if (value <= 1) return Colors.green;
+    if (value <= 2) return Colors.green[300]!;
+    if (value <= 3) return Colors.yellow[700]!;
+    if (value <= 4) return Colors.orange;
+    return Colors.red;
   }
 }
