@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         centerTitle: true,
-        backgroundColor: Colors.brown[800],
+        backgroundColor: Color(0xFF162D3B),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -102,6 +102,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 _showFilters = !_showFilters;
               });
             },
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 160,
+            height: 32,
+            child: TextField(
+              controller: _searchController,
+              style: const TextStyle(fontSize: 13, color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                hintStyle: TextStyle(color: Colors.white70, fontSize: 12),
+                prefixIcon: const Icon(Icons.search, size: 16, color: Colors.white70),
+                filled: true,
+                fillColor: Colors.white24,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onChanged: (value) {
+                if (value.isEmpty) {
+                  _loadBooks();
+                } else {
+                  _searchBooks(value);
+                }
+              },
+            ),
           ),
         ],
         bottom: PreferredSize(
